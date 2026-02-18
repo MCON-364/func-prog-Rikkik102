@@ -1,7 +1,9 @@
 package edu.touro.las.mcon364.func_prog.exercises;
 
+import java.awt.*;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -39,8 +41,8 @@ public class FunctionalInterfaceExercises {
      *
      */
     public static Supplier<Integer> currentYearSupplier() {
-      // TODO
-        return null;
+      Supplier<Integer> currYear = () -> LocalDate.now().getYear();
+        return currYear;
     }
 
     /**
@@ -48,8 +50,8 @@ public class FunctionalInterfaceExercises {
      * between 1 and 100.
      */
     public static Supplier<Integer> randomScoreSupplier() {
-        // TODO
-        return null;
+        Supplier<Integer> random = () -> ThreadLocalRandom.current().nextInt(55, 87);
+        return random;
     }
 
     // =========================================================
@@ -61,8 +63,8 @@ public class FunctionalInterfaceExercises {
      * a string is all uppercase.
      */
     public static Predicate<String> isAllUpperCase() {
-        // TODO
-        return null;
+        Predicate<String> isUpperCase = (str) -> str.matches("[A-Z, 0-9!@#$%^&*]+");
+        return isUpperCase;
     }
 
     /**
@@ -72,8 +74,8 @@ public class FunctionalInterfaceExercises {
      * Hint: consider chaining.
      */
     public static Predicate<Integer> positiveAndDivisibleByFive() {
-        // TODO
-        return null;
+        Predicate<Integer> hasConditions = x -> (x > 0) && (x%5 == 0);
+        return hasConditions;
     }
 
     // =========================================================
@@ -87,8 +89,8 @@ public class FunctionalInterfaceExercises {
      * Formula: F = C * 9/5 + 32
      */
     public static Function<Double, Double> celsiusToFahrenheit() {
-        // TODO
-        return null;
+        Function<Double, Double> celciusToFarenheit = temp -> temp * 1.8 + 32;
+        return celciusToFarenheit;
     }
 
     /**
@@ -98,8 +100,16 @@ public class FunctionalInterfaceExercises {
      * Bonus: Make it case-insensitive.
      */
     public static Function<String, Integer> countVowels() {
-        // TODO
-        return null;
+        Function<String, Integer> vowelCount = word -> {
+            int total = 0;
+           for (char c: word.toUpperCase().toCharArray()) {
+               if (c == 'A' || c== 'E' || c== 'I' || c== 'O' || c== 'U') {
+                   total++;
+               }
+           }
+           return total;
+        };
+        return vowelCount;
     }
 
     // =========================================================
@@ -114,8 +124,8 @@ public class FunctionalInterfaceExercises {
      * *** Hello ***
      */
     public static Consumer<String> starPrinter() {
-        // TODO
-        return null;
+        Consumer<String> printer = str -> System.out.println("*** " +str+ " ***");
+        return printer;
     }
 
     /**
@@ -123,8 +133,8 @@ public class FunctionalInterfaceExercises {
      * of an integer.
      */
     public static Consumer<Integer> printSquare() {
-        // TODO
-        return null;
+        Consumer<Integer> square = x -> System.out.println(x*x);
+        return square;
     }
 
     // =========================================================
@@ -143,7 +153,14 @@ public class FunctionalInterfaceExercises {
      *  - Print them
      */
     public static void processStrings(List<String> values) {
-        // TODO
+        Predicate<String> isLong = word -> word.length() > 3;
+        Function<String, String> toLowerCase = word -> word.toLowerCase();
+        Consumer<String> printer = System.out::println;
+        for (String value : values) {
+            if(isLong.test(value)) {
+                printer.accept(toLowerCase.apply(value));
+            }
+        }
     }
 
     /**
@@ -156,6 +173,14 @@ public class FunctionalInterfaceExercises {
      * Print only those above 70.
      */
     public static void generateAndFilterScores() {
-        // TODO
+       Supplier<Integer> random = () -> ThreadLocalRandom.current().nextInt(0, 101);
+       Predicate<Integer> isOver70 = x -> x > 70;
+       Consumer<Integer> printer = System.out::println;
+       for (int i = 0; i < 5; i++) {
+           int currNum = random.get();
+           if (isOver70.test(currNum)) {
+               printer.accept(currNum);
+           }
+       }
     }
 }
