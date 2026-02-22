@@ -1,7 +1,9 @@
 package edu.touro.las.mcon364.func_prog.homework;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.*;
 
 /**
@@ -44,7 +46,11 @@ public class SmartDataEngine {
             Function<T, R> mapper,
             Consumer<R> consumer
     ) {
-        // TODO
+       for (T item: input) {
+           if (filter.test(item)) {
+               consumer.accept(mapper.apply(item));
+           }
+       }
     }
 
     // ============================================================
@@ -59,8 +65,12 @@ public class SmartDataEngine {
      * - Otherwise return Optional.of(result)
      */
     public static Optional<Double> safeDivide(double a, double b) {
-        // TODO
-        return Optional.empty();
+        if (b == 0) {
+            return Optional.empty();
+        }
+        else {
+            return Optional.of(a/b);
+        }
     }
 
     /**
@@ -78,8 +88,8 @@ public class SmartDataEngine {
      *  - Use orElse(...) to provide a default value when empty.
      */
     public static double processDivision(double a, double b) {
-        // TODO
-        return 0;
+        Optional<Double> answer = safeDivide(a, b);
+        return answer.map(x -> x * 10).orElse(-1.0);
     }
 
     // ============================================================
@@ -109,7 +119,14 @@ public class SmartDataEngine {
         //     default -> ...
         // };
 
-        return null;
+        String type = input.getClass().getSimpleName();
+        return switch (type) {
+            case "Integer" -> ((Number) input).intValue() * ((Number) input).intValue();
+            case "String" ->  ((String) input).toUpperCase();
+            case "Double" ->  Math.round(((Number) input).doubleValue());
+            default -> "Unsupported";
+        };
+
     }
 
     // ============================================================
@@ -146,8 +163,10 @@ public class SmartDataEngine {
      */
 
     public static Function<String, Integer> buildStringLengthPipeline() {
-        // TODO
-        return null;
+        Function<String, String> trim = String::trim;
+        Function<String, String> toLowerCase = String::toLowerCase;
+        Function <String, Integer> length = String::length;
+        return toLowerCase.andThen(length).compose(trim);
     }
 
     // ============================================================
@@ -187,7 +206,19 @@ public class SmartDataEngine {
      */
 
     public static void runScoreProcessor() {
-        // TODO
+        Supplier<Integer> randomNumber = () -> ThreadLocalRandom.current().nextInt(1, 100);
+        Predicate<Integer> isOver50 = x -> x > 50;
+        Function<Integer, String> toScore = x -> "Score: " + x;
+        Consumer<String> printScore =  System.out::println;
+        List<Integer> scores = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            scores.add(randomNumber.get());
+        }
+        for (Integer score: scores) {
+            if (isOver50.test(score)) {
+                printScore.accept(toScore.apply(score));
+            }
+        }
     }
 
 }
